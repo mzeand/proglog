@@ -30,3 +30,25 @@ $ ./ch1_local_test.sh
 
 
 ```
+
+## Chapter 2
+
+
+### Install the protocol compiler plugins
+
+- [gRPC go Quick start](https://grpc.io/docs/languages/go/quickstart/)
+
+```sh
+$ go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+$ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+$ export PATH="$PATH:$(go env GOPATH)/bin"
+```
+
+### Compile
+
+```sh
+$ protoc api/v1/*.proto \
+  --go_out=. \
+  --go_opt=paths=source_relative \
+  --proto_path=.
+```
