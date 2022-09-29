@@ -10,7 +10,7 @@ import (
 const (
 	offWidth uint64 = 4
 	posWidth uint64 = 8
-	entWidth        = offWidth + posWidth
+	lenWidth        = offWidth + posWidth
 )
 
 type index struct {
@@ -54,16 +54,16 @@ func (i *index) Read(in int64) (out uint32, pos uint64, err error) {
 		return 0, 0, io.EOF
 	}
 	if in == -1 {
-		out = uint32((i.size / entWidth) - 1)
+		out = uint32((i.size / lenWidth) - 1)
 	} else {
 		out = uint32(in)
 	}
-	pos = uint64(out) * entWidth
-	if i.size < pos+entWidth {
+	pos = uint64(out) * lenWidth
+	if i.size < pos+lenWidth {
 		return 0, 0, io.EOF
 	}
 	out = enc.Uint32(i.mmap[pos : pos+offWidth])
-	pos = enc.Uint64(i.mmap[pos+offWidth : pos+entWidth])
+	pos = enc.Uint64(i.mmap[pos+offWidth : pos+lenWidth])
 	return out, pos, nil
 }
 
@@ -72,13 +72,13 @@ func (i *index) Write(off uint32, pos uint64) error {
 		return io.EOF
 	}
 	enc.PutUint32(i.mmap[i.size:i.size+offWidth], off)
-	enc.PutUint64(i.mmap[i.size+offWidth:i.size+entWidth], pos)
-	i.size += uint64(entWidth)
+	enc.PutUint64(i.mmap[i.size+offWidth:i.size+lenWidth], pos)
+	i.size += uint64(lenWidth)
 	return nil
 }
 
 func (i *index) isMaxed() bool {
-	return uint64(len(i.mmap)) < i.size+entWidth
+	return uint64(len(i.mmap)) < i.size+lenWidth
 }
 
 func (i *index) Name() string {
