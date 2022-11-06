@@ -38,7 +38,7 @@ func TestSegment(t *testing.T) {
 	require.True(t, s.IsMaxed())
 	require.NoError(t, s.Close())
 	p, _ := proto.Marshal(want)
-	c.Segment.MaxStoreBytes = uint64(len(p)+lenWidth) * 4
+	c.Segment.MaxStoreBytes = uint64(len(p))+lenWidth * 4
 	c.Segment.MaxIndexBytes = 1024
 
 	s, err = newSegment(dir, 16, c)
